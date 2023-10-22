@@ -10,7 +10,12 @@ namespace Refrigerator_exercise
     {
         static void Main(string[] args)
         {
-
+            Refrigerator refrigerator= new Refrigerator();
+            Console.WriteLine(refrigerator);
+            refrigerator.cleanRefrigerator();
+            Console.WriteLine("-------------------------");
+            Console.WriteLine(refrigerator);
+            Console.ReadLine();
         }
     }
 }

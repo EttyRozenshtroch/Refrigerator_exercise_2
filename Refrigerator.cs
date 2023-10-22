@@ -9,49 +9,203 @@ namespace Refrigerator_exercise
     public enum ColorRefrigerator { gray, white, black }
     internal class Refrigerator
     {
-        private static int numberOfRefrigerator = 0;
-        private int id;
-        private string model;
-        private ColorRefrigerator color;
-        private int numberOfShlfs;
-        private int[] listOfShelfs;
+        private static int _numberOfRefrigerator = 0;
+        private int _id;
+        private string _model;
+        private ColorRefrigerator _color;
+        private int _numberOfShlfs;
+        private Shelf[] _listOfshelves;
 
-        public int ID
-        { 
-            get { return id; }
-        }
-        public string Model
+        public Refrigerator()
         {
-            get { return model; }
+            this._id = ++_numberOfRefrigerator;
+            this._model = "aaa" + this._id;
+            this._color = ColorRefrigerator.white;
+            this._numberOfShlfs = 5;
+            this._listOfshelves = new Shelf[this._numberOfShlfs];
+            for(int i=0;i<this._numberOfShlfs;i++) { this._listOfshelves[i] = new Shelf(); }
+        }
+        public int id
+        { 
+            get { return _id; }
+        }
+        public string model
+        {
+            get { return this._model; }
             set
             {
                 if (value == "" || value == null)
-                    model = "unknowen";
-                model = value;
+                    this._model = "unknowen";
+                this._model = value;
             }
         }
-        public ColorRefrigerator Color
+        public ColorRefrigerator color
         { 
-            get { return color; } 
-            set { color = value; }
+            get { return this._color; } 
+            set { this._color = value; }
         }
-        public int NumberOfShrlfs
+        public int numberOfShrlfs
         { 
-            get { return numberOfShlfs; } 
+            get { return this._numberOfShlfs; } 
             set 
             { 
-                if(value>0)
-                    numberOfShlfs = value;
-                numberOfShlfs = 4;
+                if(value>0&&value<7)
+                    this._numberOfShlfs = value;
+                this._numberOfShlfs = 4;
             } 
         }
-        public int[] Shelfs { get { return listOfShelfs; } }
+        public Shelf[] listOfshelves { get { return this._listOfshelves; } }
 
         public override string ToString()
         {
-            return "The ID of the refrigerator is:{0}.\nThe model of the refrigerator is:{1}.\n" +
-                "The color of the refrigerator is:{1}.\nThe numberOfShlfs of the refrigerator is:{1}.\n" +
-                "The list of shelfs in the refrigerator is:{ 1}.\n";
+            string shlfsString = "\n";
+            foreach (var shelf in _listOfshelves)
+            {
+                shlfsString += "  *" + shelf.ToString() + "\n";
+            }
+            return "The ID of the refrigerator is"+this._id+".\nThe model of the refrigerator is:"+this._model+".\n" +
+                "The color of the refrigerator is:"+this._color+".\nThe numberOfShlfs of the refrigerator is:"+this._numberOfShlfs+".\n" +
+                "The list of shelfs in the refrigerator is:"+shlfsString;
+        }
+        public void addItem(Item item)
+        {
+            for (int i = 0;i< this._listOfshelves.Length;i++)
+            {
+                if (this._listOfshelves[i].addItem(item)) ;
+                    break;
+            }
+        }
+        public Item removeItem(int itemId)
+        {
+            Item tempItem;
+            foreach (var shelf in this._listOfshelves)
+            {
+                tempItem = shelf.removeItem(itemId);
+                if (tempItem != null)
+                    return tempItem;
+            }
+            return null;
+        }
+        public void cleanRefrigerator()
+        {
+            foreach(var  shelf in this._listOfshelves)
+            {
+                shelf.cleanSelf();
+            }
+        }
+        public void cleanRefrigeratorByType(Kashrut kashrut,int days)
+        {
+            foreach (var shelf in this._listOfshelves)
+            {
+                shelf.cleanSelfByType(kashrut,days);
+            }
+        }
+        public double getFreeSpace()
+        {
+            double freeSpace = 0;
+            foreach (var shelf in _listOfshelves)
+            {
+                freeSpace += shelf.getFreeSpace();
+            }
+            return freeSpace;
+        }
+        public double getHowMuchSpaceWillBeFree(Kashrut kashrut,int days)
+        {
+            double HowMuchSpaceWillBeFree = 0;
+            foreach (var shelf in this._listOfshelves)
+            {
+                HowMuchSpaceWillBeFree += shelf.getHowMuchSpaceWillBeFree(kashrut,days);
+            }
+            return HowMuchSpaceWillBeFree;
+        }
+
+        public void preparingForShopping()
+        {
+            double freeSpace;
+            freeSpace = getFreeSpace();
+            if (freeSpace >= 20)
+            {
+                Console.WriteLine("There's enough of space in the refrigerator. You can go shopping :)");
+                return;
+            }
+            this.cleanRefrigerator();
+            Console.WriteLine("We removed the expired items.");
+            freeSpace = getFreeSpace();
+            if (freeSpace >= 20)
+            {
+                Console.WriteLine("There's enough of space in the refrigerator. You can go shopping :)");
+                return;
+            }
+            freeSpace = getFreeSpace();
+            freeSpace += this.getHowMuchSpaceWillBeFree(Kashrut.dairy,3);
+            if (freeSpace >=20)
+            {
+                this.cleanRefrigeratorByType(Kashrut.dairy,3);
+                Console.WriteLine("We removed the dairy items whose validity is about to expire in three days");
+                Console.WriteLine("There's enough of space in the refrigerator. You can go shopping :)");
+                return;
+            }
+            freeSpace += this.getHowMuchSpaceWillBeFree(Kashrut.meat,3);
+            if (freeSpace >= 20)
+            {
+                Console.WriteLine("We removed the dairy items whose validity is about to expire in three days");
+                this.cleanRefrigeratorByType(Kashrut.dairy, 3);
+                Console.WriteLine("We removed the meat items whose validity is about to expire in three days");
+                this.cleanRefrigeratorByType(Kashrut.meat, 3);
+                Console.WriteLine("There's enough of space in the refrigerator. You can go shopping :)");
+                return;
+            }
+            freeSpace += this.getHowMuchSpaceWillBeFree(Kashrut.fur, 1);
+            if (freeSpace >= 20)
+            {
+                Console.WriteLine("We removed the dairy items whose validity is about to expire in three days");
+                this.cleanRefrigeratorByType(Kashrut.dairy, 3);
+                Console.WriteLine("We removed the meat items whose validity is about to expire in three days");
+                this.cleanRefrigeratorByType(Kashrut.meat, 3);
+                Console.WriteLine("We removed the fur items whose validity is about to expire in one day");
+                this.cleanRefrigeratorByType(Kashrut.meat, 3);
+                Console.WriteLine("There's enough of space in the refrigerator. You can go shopping :)");
+                return;
+            }
+            Console.WriteLine("The refrigerator is full. This is not the time to shoping :(");
+            return;
+        }
+        public List<Item> getWhatToEat(Kashrut kashrut, TypeItem itemType)
+        {
+            List<Item> itemsToEat = new List<Item>();// The final list of the items that fit the requirements
+            List<Item> whatToEat= new List<Item>(); //The list of the items that fit the requirements in a specific shelf
+            foreach (Shelf shelf in this._listOfshelves)
+            {
+                whatToEat = shelf.getWhatToEat(kashrut, itemType);
+                foreach(Item item in whatToEat)
+                {
+                    itemsToEat.Add(item);
+                }
+            }
+            return itemsToEat;            
+        }
+        public List<Item> sortItemByExpiredDate()
+        {
+            List<Item> allItemsOnlist = new List<Item>();
+            foreach (Shelf shelf in this.listOfshelves)
+            {
+                allItemsOnlist.AddRange(shelf.items);
+            }
+
+            List<Item> SortedList = allItemsOnlist.OrderBy(o => o.expirationDate).ToList();
+            return SortedList;
+        }
+        public List<Shelf> sortShelvesByFeeSpace()
+        {
+            List<Shelf> sortedList = new List<Shelf>(); 
+            sortedList.AddRange(this.listOfshelves);
+            sortedList.OrderBy(o => o.getFreeSpace());
+            sortedList.Reverse();
+            return sortedList;
         }
     }
 }
+
+
+
+

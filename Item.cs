@@ -19,27 +19,44 @@ namespace Refrigerator_exercise
         private DateTime _expirationDate;
         private double _area;
 
-
+        public Item() 
+        {
+            this._id = ++_numberOfItems;
+            this._name="item"+this._id;
+            this._type = 0;
+            this._kashrut = 0;
+            this._expirationDate = DateTime.Today.AddDays(-3);
+            this._area = 5;
+        }
+        public Item(string name,TypeItem type,Kashrut kashrut, DateTime expirationDate,double area)
+        {
+            this._id = ++_numberOfItems;
+            this.name = name;
+            this.type = type;
+            this._kashrut = kashrut;
+            this._expirationDate = expirationDate;
+            this._area = area;
+        }
         public int id
         {
-            get { return _id; }
+            get { return this._id; }
         }
         public string name
         {
             get { return name; }
-            set
+            set 
             {
                 if (value != null)
                     this._name = value;
                 this._name = "No name";
             }
         }
-        public int shlefID
+        public int shlfID
         {
-            get { return this._ShelfID; }
+            get {return this._ShelfID; }
             set
             {
-                if (value > 0)
+                if(value>0)
                     this._ShelfID = value;
                 this._ShelfID = 0;
             }
@@ -50,30 +67,28 @@ namespace Refrigerator_exercise
             get { return this._type; }
             set { this._type = value; }
         }
-        public TypeItem kashrut
+        public Kashrut kashrut
         {
-            get { return this._type; }
-            set { this._type = value; }
+            get { return this._kashrut; }
+            set { this._kashrut = value; }
         }
         public DateTime expirationDate
         {
             get { return this._expirationDate; }
-            set { this._expirationDate = value; }
+            set
+            {
+                this._expirationDate = value;
+            }
         }
         public double area
-
         {
             get { return this._area; }
             set
             {
-                if (value > 0)
-                    this._area = value;
-                this._area = 0;
+                this._area = value;
             }
-
         }
-
-        public string toString()
+        public override string ToString()
         {
             return "The ID of the item is:"+this._id+ ".\nThe name of the item is:"+ this._name + ".\nThe item is " +
                 "placed on"+this._ShelfID + " shelf.\nThe type of the item is"+ this._type + ".\nThe kashrut of the " +

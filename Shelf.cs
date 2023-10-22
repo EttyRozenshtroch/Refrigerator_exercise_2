@@ -8,12 +8,20 @@ namespace Refrigerator_exercise
 {
     internal class Shelf
     {
-        private static int numberOfShlfs = 0;
+        private static int _numberOfShlfs = 0;
         private int _id;
         private int _floorNumber;
         private double _area;
         private List<Item> _items;
 
+        public Shelf()
+        {
+            this._id = ++_numberOfShlfs;
+            this._floorNumber = 1;
+            this._area = 2;
+            this._items = new List<Item>();
+            this._items.Add(new Item());
+        }
         public int id
         {
             get { return this._id; }
@@ -21,32 +29,116 @@ namespace Refrigerator_exercise
         public int floorNumber
         {
             get { return this._floorNumber; }
-            set 
+            set
             {
-                if(value>0)
+                if (value > 0 && value < 7)
                     this._floorNumber = value;
-                this._floorNumber = 1;
+                this._floorNumber = value;
             }
         }
         public double area
         {
-            get { return this.area; }
+            get { return this._area; }
             set
             {
                 if (value > 0)
-                    this.area = value;
-                this._area = 0;
+                    this._area = value;
+                this.area = 1;
             }
         }
-
-        public string toString()
+        public List<Item> items
+        { get { return this._items; } }
+        public override string ToString()
         {
             string itemsString = "";
             foreach (var item in _items)
             {
-                itemsString+=" *"+ item.ToString()+"\n";
+                itemsString += "  *" + item.ToString() + "\n";
             }
-            return "";
+            return "The ID of the shlf is:" + this._id + ".\nThe floor number of the shelf is:" + this._floorNumber +
+                "The area of the shlf is:" + this._area + "The list f items in the shelf: " + itemsString;
         }
+        public bool addItem(Item item)
+        {
+            if (item.area <= this.getFreeSpace())
+            {
+                this._items.Add(item);
+                item.shlfID=this._id;
+                return true;
+            }
+            return false;
+        }
+        public Item removeItem(int itemId)
+        {
+            foreach (var item in _items)
+            {
+                if (item.id == itemId)
+                    return item;
+            }
+            return null;
+        }
+        public void cleanSelf()
+        {
+            //foreach(var item in this._items)
+            //{
+            //    if(item.expirationDate<DateTime.Today)
+            //    {
+            //        this._items.Remove(item);
+            //    }
+            //}
+            int numberOfItems = this._items.Count;
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                if (this._items[i].expirationDate < DateTime.Today)
+                {
+                    this._items.Remove(this._items[i]);
+                    numberOfItems--;
+                }
+            }
+        }
+        public void cleanSelfByType(Kashrut kashrut, int days)
+        {
+            int numberOfItems = this._items.Count;
+            for (int i = 0; i < numberOfItems; i++)
+            {
+                if (this._items[i].kashrut == kashrut && this._items[i].expirationDate < DateTime.Today.AddDays(days))
+                {
+                    this._items.Remove(this._items[i]);
+                    numberOfItems--;
+                }
+            }
+        }
+        public double getFreeSpace()
+        {
+            double freeSpace = this._area;
+            foreach (var item in _items)
+            {
+                freeSpace -= item.area;
+            }
+            return freeSpace;
+        }
+        public double getHowMuchSpaceWillBeFree(Kashrut kashrut, int days)
+        {
+            double HowMuchSpaceWillBeFree = 0;
+            foreach (var item in this._items)
+            {
+                if (item.kashrut == kashrut && item.expirationDate < DateTime.Today.AddDays(days))
+                    HowMuchSpaceWillBeFree += item.area;
+            }
+            return HowMuchSpaceWillBeFree;
+        }
+        public List<Item> getWhatToEat(Kashrut kashrut, TypeItem itemType)
+        {
+            List<Item> itemsToEat = new List<Item>();
+            foreach (var item in this._items)
+            {
+                if (item.type == itemType && item.kashrut == kashrut && item.expirationDate > DateTime.Today)
+                {
+                    itemsToEat.Add(item);
+                }
+            }
+            return itemsToEat;
+        }
+
     }
 }
