@@ -22,6 +22,14 @@ namespace Refrigerator_exercise
             this._items = new List<Item>();
             this._items.Add(new Item());
         }
+        public Shelf(int floorNumber, double shlfArea)
+        {
+            _id =++_numberOfShlfs;
+            this.floorNumber = floorNumber;
+            this.area = shlfArea;
+            _items = new List<Item>();
+        }
+
         public int id
         {
             get { return this._id; }
@@ -43,20 +51,21 @@ namespace Refrigerator_exercise
             {
                 if (value > 0)
                     this._area = value;
-                this.area = 1;
+                else
+                    this._area = 1;
             }
         }
         public List<Item> items
         { get { return this._items; } }
         public override string ToString()
         {
-            string itemsString = "";
-            foreach (var item in _items)
+            string itemsString = "\n";
+            foreach (var item in this._items)
             {
                 itemsString += "  *" + item.ToString() + "\n";
             }
             return "The ID of the shlf is:" + this._id + ".\nThe floor number of the shelf is:" + this._floorNumber +
-                "The area of the shlf is:" + this._area + "The list f items in the shelf: " + itemsString;
+                "\nThe area of the shlf is:" + this._area + "\nThe list f items in the shelf: " + itemsString;
         }
         public bool addItem(Item item)
         {
@@ -70,22 +79,21 @@ namespace Refrigerator_exercise
         }
         public Item removeItem(int itemId)
         {
-            foreach (var item in _items)
+            Item itemToReturn = null;
+            int numberOfItems = this._items.Count;               
+            for (int i = 0; i < numberOfItems; i++)
             {
-                if (item.id == itemId)
-                    return item;
+                if (this._items[i].id==itemId)
+                {
+                    itemToReturn = this._items[i];
+                    this._items.Remove(this._items[i]);
+                    break;
+                }
             }
-            return null;
+            return itemToReturn;
         }
         public void cleanSelf()
         {
-            //foreach(var item in this._items)
-            //{
-            //    if(item.expirationDate<DateTime.Today)
-            //    {
-            //        this._items.Remove(item);
-            //    }
-            //}
             int numberOfItems = this._items.Count;
             for (int i = 0; i < numberOfItems; i++)
             {

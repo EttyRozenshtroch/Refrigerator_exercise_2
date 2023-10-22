@@ -48,7 +48,8 @@ namespace Refrigerator_exercise
             {
                 if (value != null)
                     this._name = value;
-                this._name = "No name";
+                else
+                    this._name = "No name";
             }
         }
         public int shlfID

@@ -13,17 +13,30 @@ namespace Refrigerator_exercise
         private int _id;
         private string _model;
         private ColorRefrigerator _color;
-        private int _numberOfShlfs;
+        private int _numberOfShelves;
         private Shelf[] _listOfshelves;
+
 
         public Refrigerator()
         {
             this._id = ++_numberOfRefrigerator;
             this._model = "aaa" + this._id;
             this._color = ColorRefrigerator.white;
-            this._numberOfShlfs = 5;
-            this._listOfshelves = new Shelf[this._numberOfShlfs];
-            for(int i=0;i<this._numberOfShlfs;i++) { this._listOfshelves[i] = new Shelf(); }
+            this._numberOfShelves = 5;
+            this._listOfshelves = new Shelf[this._numberOfShelves];
+            for (int i = 0; i < this._numberOfShelves; i++) { this._listOfshelves[i] = new Shelf(); }
+        }
+        public Refrigerator(string modelR,ColorRefrigerator colorR,int numberOfShelves)
+        {
+            this._id = ++_numberOfRefrigerator;
+            this.model = modelR;
+            this._color = colorR;
+            this._numberOfShelves = numberOfShelves;
+            this._listOfshelves = new Shelf[this._numberOfShelves];
+            for (int i = 0; i < this._numberOfShelves; i++)
+            {
+                this._listOfshelves[i] = new Shelf(i,55);
+            }
         }
         public int id
         { 
@@ -36,7 +49,8 @@ namespace Refrigerator_exercise
             {
                 if (value == "" || value == null)
                     this._model = "unknowen";
-                this._model = value;
+                else
+                    this._model = value;
             }
         }
         public ColorRefrigerator color
@@ -46,12 +60,13 @@ namespace Refrigerator_exercise
         }
         public int numberOfShrlfs
         { 
-            get { return this._numberOfShlfs; } 
+            get { return this._numberOfShelves; } 
             set 
             { 
                 if(value>0&&value<7)
-                    this._numberOfShlfs = value;
-                this._numberOfShlfs = 4;
+                    this._numberOfShelves = value;
+                else
+                    this._numberOfShelves = 4;
             } 
         }
         public Shelf[] listOfshelves { get { return this._listOfshelves; } }
@@ -64,15 +79,15 @@ namespace Refrigerator_exercise
                 shlfsString += "  *" + shelf.ToString() + "\n";
             }
             return "The ID of the refrigerator is"+this._id+".\nThe model of the refrigerator is:"+this._model+".\n" +
-                "The color of the refrigerator is:"+this._color+".\nThe numberOfShlfs of the refrigerator is:"+this._numberOfShlfs+".\n" +
+                "The color of the refrigerator is:"+this._color+".\nThe numberOfShlfs of the refrigerator is:"+this._numberOfShelves +".\n" +
                 "The list of shelfs in the refrigerator is:"+shlfsString;
         }
         public void addItem(Item item)
         {
-            for (int i = 0;i< this._listOfshelves.Length;i++)
+            for (int i = 0; i < this._listOfshelves.Length; i++)
             {
-                if (this._listOfshelves[i].addItem(item)) ;
-                    break;
+                if (this._listOfshelves[i].addItem(item))
+                    return;
             }
         }
         public Item removeItem(int itemId)
@@ -205,7 +220,5 @@ namespace Refrigerator_exercise
         }
     }
 }
-
-
 
 
